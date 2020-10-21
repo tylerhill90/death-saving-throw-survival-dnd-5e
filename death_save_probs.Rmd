@@ -2,7 +2,7 @@
 title: "Probability of Surviving Death Saves in D&D 5e"
 author: "Tyler Hill"
 date: "10/21/2020"
-output: html_document
+output: rmarkdown::github_document
 ---
 
 ```{r setup, include=FALSE}
