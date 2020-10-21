@@ -106,7 +106,7 @@ ds_roll_length <- unlist(ds_data[2,])
 (mean_outcome <- mean(ds_result)) # Probability of surviving
 ```
 
-    ## [1] 0.59
+    ## [1] 0.6
 
 ``` r
 (mean_roll <- mean(ds_roll_length)) # The average number or rolls in a death saving throw event
@@ -151,6 +151,7 @@ From the graph above we can see that you are most likely to roll more
 than 2 times before you either succeed or fail. This is important
 because death saving throws are usually performed while the PCs are in
 combat. Combat in D\&D is turned based so this means that if a player
-“goes down” and is performing death saving throws each round the other
-PCs should do their best on their turn to immediately help that player
-before their third death saving throw.
+“goes down” and is performing death saving throws each round, then the
+other PCs should immediately do their best on their turn to help that
+player (ie. heal or stabilize them with a medicine check) before their
+third death saving throw.

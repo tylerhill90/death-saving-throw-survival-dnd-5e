@@ -107,4 +107,4 @@ p2 <- ggplot(df, aes(rolls, fill=factor(results))) + geom_bar()  +
 grid.arrange(p, p2, widths=c(1,3))
 ```
 
-From the graph above we can see that you are most likely to roll more than 2 times before you either succeed or fail. This is important because death saving throws are usually performed while the PCs are in combat. Combat in D&D is turned based so this means that if a player "goes down" and is performing death saving throws each round the other PCs should do their best on their turn to immediately help that player before their third death saving throw.
+From the graph above we can see that you are most likely to roll more than 2 times before you either succeed or fail. This is important because death saving throws are usually performed while the PCs are in combat. Combat in D&D is turned based so this means that if a player "goes down" and is performing death saving throws each round, then the other PCs should immediately do their best on their turn to help that player (ie. heal or stabilize them with a medicine check) before their third death saving throw.
