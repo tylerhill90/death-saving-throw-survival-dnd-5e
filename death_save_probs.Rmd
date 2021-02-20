@@ -30,7 +30,7 @@ Regardless, once three or more marks in either the "Failures" or "Successess" se
 
 ## What is the likelihood of living or dying?
 
-So, as we can see from the rules above it is not a simple probability calculation to come up with our likelihood of either living or dying. Instead we are dealing with [conditional probability](https://en.wikipedia.org/wiki/Conditional_probability) and must use a more sophisticated means to derive the likelihood of surviving. In order to answer this I will implement a Monte Carlo simulation to perform thousands of death saving throw events and arrive at the approximate answer.
+So, as we can see from the rules above it is not a simple probability calculation to come up with our likelihood of either living or dying. Instead we are dealing with [conditional probability](https://en.wikipedia.org/wiki/Conditional_probability) and must use a more sophisticated means to derive the likelihood of surviving. In order to answer this I will implement a Monte Carlo simulation as well as a Markov chain Monte Carlo (MCMC) to perform thousands of death saving throw events and arrive at the approximate answer.
 
 
 ## Monte Carlo simulation
@@ -86,7 +86,23 @@ death_save <- function() {
 
 This function will be run thousands of times, storing the results each time to analyze later. But first, let's build our MCMC to compare the runtimes between these two approaches.
 
-Next we will perform the actual Monte Carlo simulations by conducting 10,000 of death saving throw events and tracking their results.
+
+## Markov chain Monte Carlo simulation
+
+Ultimately we have two final states that a death saving throw event can end up in, success or failure. To get to these final states you can think about each roll as a walk through a graph of nodes, where every node represents the outcome of all previous rolls. We will always start with zero successes and zero failures, but after each roll we will randomly move to a new node in our graph. The shortest path we can take to a final state is rolling a 20 on our first roll. The longest path we can take would be five rolls, two successes and two failures before a final success or failure. So, this problem can be perfectly represented with whats known as a directed acyclic graph, [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph). Below you can see such a DAG for this problem.
+
+```{r}
+library(tidyverse)
+library(ggdag)
+
+dagify(y ~ x) %>% 
+  ggdag()
+```
+
+
+## Performing and Benchmarking Analysis
+
+Next we will perform the actual Monte Carlo and MCMC simulations by conducting 10,000 of death saving throw events for each method, tracking their results and reporting the time it took to perform the analysis.
 
 ```{r}
 options(digits = 2) # Report to 2 significant figures
