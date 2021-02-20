@@ -1,58 +1,52 @@
-Probability of Surviving Death Saves in D\&D 5e
-================
-Tyler Hill
-10/21/2020
+---
+title: "Probability of Surviving Death Saves in D&D 5e"
+author: "Tyler Hill"
+output:
+  html_document:
+    keep_md: true
+---
+
+
 
 ## Introduction
 
-[Dungeons and
-Dragons](https://en.wikipedia.org/wiki/Dungeons_%26_Dragons) (D\&D) is a
-roleplaying game originally developed in 1974 by Gary Gygax and Dave
-Arneson. Players assume the role of a player character, PC, that lives
-in a fantasy world and cooperate together to tackle the narrative
-challenges that the Dungeon Master concocts for them. This could involve
-negotiating a high stakes peace deal between warring kingdoms, defeating
-a ragtag group of goblins in combat, or anything in between. There are
-several iterations of the rules for how to play D\&D but we will be
-looking at the Fifth Edition here, commonly referred to as 5e.
+[Dungeons and Dragons](https://en.wikipedia.org/wiki/Dungeons_%26_Dragons) (D&D) is a tabletop roleplaying game originally developed in 1974 by Gary Gygax and Dave Arneson. Players assume the role of a player character, PC, and they play together to respond to the narrative concocted by the Dungeon Master, DM. This analysis will examine the probability of surviving when a PC's health points, HP, drops below 0.
 
-## What is a death saving throw?
 
-PC’s have a certain amount of health. When they take damage their health
-total drops. When this health total drops below zero they then have to
-make death saving throws to see if their character ultimately stabilizes
-and lives or dies forever.
+### So what really is a death saving throw?
 
-These saving throws are done by rolling a 20 sided die, d20, and noting
-the outcome in a “Successess” or “Failures” box (see Fig 1. below). If
-the roll is between 2 and 9 then they get one step closer to death. If
-the roll is between 10 and 19 then they get one step closer to
-stabilizing. What about a roll of a 1 or 20? These numbers are special
-in D\&D and are usually treated as an automatic failure or success when
-trying to accomplish something. In the context of death saving throws,
-rolling a 1 counts as two steps closer to death and rolling a 20 results
-in your character immediately coming back to life.
+PC's have a certain amount of HP. When they take damage, their HP total drops. When their HP total drops below zero they go unconscious and have to make a death saving throw. Each saving throw boils down to rolling a 20 sided die on their turn to see if their character gets closer to stabilizing or dying forever.
 
-Regardless, once three (or more) marks in either “Failures” or
-“Successess” is reached your character either lives or dies
-respectively.
+### The Nitty Gritty Rules!
 
-![Figure 1. Death Saving Throw Tracker on a D\&D 5e Character Sheet
-showing one failure marked.](death_save_box.png)
+Each time a PC rolls the 20 sided die, d20, they note the outcome and either place a check in the corresponding "Successess" or "Failures" section (see Fig 1. below). If the roll is between 2 and 9 then they place one check in the "Failures" section. If the roll is between 10 and 19 then they place one check in the "Successess" section. What about a roll of 1 or 20? These numbers are special in D&D and are usually treated as an automatic failure or success respectively. In the context of death saving throws, rolling a 1 counts as placing two checks in the "Failures" section. Rolling a 20 results in placing three checks in the "Successess" section and your character immediately coming back to life with 1 HP.
+
+Regardless, once three or more marks in either the "Failures" or "Successess" sections are reached your character either lives or dies respectively.
+
+![Figure 1. Death Saving Throw Tracker on a D&D 5e Character Sheet showing one failure marked.](death_save_box.png)
+
 
 ## What is the likelihood of living or dying?
 
-So, as we can see from the rules above it is not a simple probability
-calculation to come up with our likelihood of either living or dying. In
-order to answer this I will implement a Monte Carlo simulation to
-perform thousands of death saving throw events and arrive at the
-approximate answer.
+So, as we can see from the rules above it is not a simple probability calculation to come up with our likelihood of either living or dying. Instead we are dealing with [conditional probability](https://en.wikipedia.org/wiki/Conditional_probability) and must use a more sophisticated means to derive the likelihood of surviving. In order to answer this I will implement a Monte Carlo simulation to perform thousands of death saving throw events and arrive at the approximate answer.
 
-First we will need a function that will perform a single death saving
-throw event, that is roll a d20 enough times to determine whether or not
-the PC survives.
 
-``` r
+## Monte Carlo simulation
+
+As a brief summary, a Monte Carlo simulation approximates a probabilistic outcome through a deterministic set of rules. There are generally four steps involved:
+
+1. **Define the inputs:** In our case these are the outcomes from rolling the d20.
+
+2. **Generate random inputs from a defined distribution:** Roll the d20.
+
+3. **Compute an outcome from the inputs:** Did the PC live or die?
+
+4. **Aggregate the results:** Plot and analyze the results to determine the probability of surviving.
+
+First we will need a function that will perform a single death saving throw event, that is roll a d20 enough times to determine whether or not the PC survives.
+
+
+```r
 death_save <- function() {
   # Variables to track
   live <- 0
@@ -89,10 +83,12 @@ death_save <- function() {
 }
 ```
 
-Next we will perform the Monte Carlo simulation by conducting 10,000 of
-these death saving throw events and tracking their results.
+This function will be run thousands of times, storing the results each time to analyze later. But first, let's build our MCMC to compare the runtimes between these two approaches.
 
-``` r
+Next we will perform the actual Monte Carlo simulations by conducting 10,000 of death saving throw events and tracking their results.
+
+
+```r
 options(digits = 2) # Report to 2 significant figures
 
 # Conduct the Monte Carlo simulation
@@ -106,24 +102,27 @@ ds_roll_length <- unlist(ds_data[2,])
 (mean_outcome <- mean(ds_result)) # Probability of surviving
 ```
 
-    ## [1] 0.6
+```
+## [1] 0.59
+```
 
-``` r
+```r
 (mean_roll <- mean(ds_roll_length)) # The average number or rolls in a death saving throw event
 ```
 
-    ## [1] 3.6
+```
+## [1] 3.6
+```
 
-So, it looks like we have a roughly 60% chance of surviving a death
-saving throw event and an average death saving throw event takes between
-3 and 4 rolls to determine.
+So, it looks like we have a roughly 60% chance of surviving a death saving throw event and an average death saving throw event takes between 3 and 4 rolls to determine. 
+
 
 ## Survival probability broken down by roll length
 
-We can dig deeper into the results and graphically show the probability
-of survival not only overall but broken down by roll length.
+We can dig deeper into the results and graphically show the probability of survival not only overall but broken down by roll length.
 
-``` r
+
+```r
 # Plot the results
 library(ggplot2)
 library(scales)
@@ -145,13 +144,6 @@ p2 <- ggplot(df, aes(rolls, fill=factor(results))) + geom_bar()  +
 grid.arrange(p, p2, widths=c(1,3))
 ```
 
-![](death_save_probs_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](death_save_probs_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
-From the graph above we can see that you are most likely to roll more
-than 2 times before you either succeed or fail. This is important
-because death saving throws are usually performed while the PCs are in
-combat. Combat in D\&D is turned based so this means that if a player
-“goes down” and is performing death saving throws each round, then the
-other PCs should immediately do their best on their turn to help that
-player (ie. heal or stabilize them with a medicine check) before their
-third death saving throw.
+From the graph above we can see that you are most likely to roll more than 2 times before you either succeed or fail. This is important because death saving throws are usually performed while the PCs are in combat. Combat in D&D is turned based so this means that if a player "goes down" and is performing death saving throws each round, then the other PCs should immediately do their best on their turn to help that player (ie. heal or stabilize them with a medicine check) before their third death saving throw.
